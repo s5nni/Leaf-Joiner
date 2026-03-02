@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Joining Roblox Server...</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: black;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, sans-serif;
+        }
+        .glow-text {
+            color: white;
+            font-size: 2rem;
+            letter-spacing: 2px;
+            text-align: center;
+            animation: pulseGlow 2s infinite ease-in-out;
+            transition: text-shadow 0.3s ease;
+        }
+        .glow-text:hover {
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.9),
+                         0 0 40px rgba(255, 255, 255, 0.5),
+                         0 0 60px rgba(255, 255, 255, 0.3);
+        }
+        @keyframes pulseGlow {
+            0% { text-shadow: 0 0 5px rgba(255,255,255,0.5); }
+            50% { text-shadow: 0 0 20px rgba(255,255,255,0.9), 0 0 30px rgba(255,255,255,0.5); }
+            100% { text-shadow: 0 0 5px rgba(255,255,255,0.5); }
+        }
+    </style>
+</head>
+<body>
+    <div class="glow-text">loading</div>
+    <script>
+        (function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const placeId = urlParams.get('placeId');
+            const jobId = urlParams.get('jobId') || urlParams.get('jobid');
+            if (placeId && jobId) {
+                const robloxUrl = `roblox://experiences/start?placeId=${encodeURIComponent(placeId)}&gameInstanceId=${encodeURIComponent(jobId)}`;
+                window.location.href = robloxUrl;
+                setTimeout(function() {
+                    if (document.visibilityState === 'visible') {
+                        const body = document.body;
+                        const loadingDiv = document.querySelector('.glow-text');
+                        loadingDiv.style.display = 'none';
+                        const fallbackLink = document.createElement('a');
+                        fallbackLink.href = robloxUrl;
+                        fallbackLink.textContent = 'Click here if Roblox does not open automatically';
+                        fallbackLink.style.color = 'white';
+                        fallbackLink.style.textDecoration = 'underline';
+                        fallbackLink.style.fontSize = '1.2rem';
+                        fallbackLink.style.textAlign = 'center';
+                        fallbackLink.style.display = 'block';
+                        fallbackLink.style.marginTop = '20px';
+                        fallbackLink.style.transition = 'text-shadow 0.3s';
+                        fallbackLink.setAttribute('target', '_blank');
+                        fallbackLink.onmouseover = function() {
+                            this.style.textShadow = '0 0 15px rgba(255,255,255,0.8)';
+                        };
+                        fallbackLink.onmouseout = function() {
+                            this.style.textShadow = 'none';
+                        };
+                        body.appendChild(fallbackLink);
+                    }
+                }, 2000);
+            } else {
+                const loadingDiv = document.querySelector('.glow-text');
+                loadingDiv.textContent = 'missing parameters';
+                loadingDiv.style.fontSize = '1.2rem';
+            }
+        })();
+    </script>
+</body>
+</html>
