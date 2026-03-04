@@ -5,109 +5,75 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Joining Roblox Server...</title>
     <style>
-        * {
+        body {
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-        }
-        body {
             background-color: black;
-            min-height: 100vh;
+            height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: Arial, sans-serif;
         }
-        .container {
-            text-align: center;
-            padding: 20px;
-        }
-        .image-wrapper {
-            display: inline-block;
-            position: relative;
-            border-radius: 20px;
-            background: linear-gradient(90deg, #ff6b6b, #4ecdc4, #45b7d1, #96c93d);
-            background-size: 300% 300%;
-            padding: 3px;
-            animation: borderRotate 3s ease infinite;
-        }
-        .robbery-image {
-            display: block;
-            width: 300px;
-            height: auto;
-            border-radius: 16px;
-            background-color: #1a1a1a;
-        }
-        @keyframes borderRotate {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-        .loading-text {
+        .glow-text {
             color: white;
-            margin-top: 20px;
-            font-size: 1.2rem;
+            font-size: 2rem;
             letter-spacing: 2px;
-            opacity: 0.8;
-            animation: pulse 1.5s ease-in-out infinite;
+            text-align: center;
+            animation: pulseGlow 2s infinite ease-in-out;
+            transition: text-shadow 0.3s ease;
         }
-        @keyframes pulse {
-            0% { opacity: 0.5; }
-            50% { opacity: 1; }
-            100% { opacity: 0.5; }
+        .glow-text:hover {
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.9),
+                         0 0 40px rgba(255, 255, 255, 0.5),
+                         0 0 60px rgba(255, 255, 255, 0.3);
         }
-        .fallback-link {
-            color: #4ecdc4;
-            margin-top: 15px;
-            font-size: 0.9rem;
-            display: none;
-        }
-        .fallback-link a {
-            color: #4ecdc4;
-            text-decoration: underline;
+        @keyframes pulseGlow {
+            0% { text-shadow: 0 0 5px rgba(255,255,255,0.5); }
+            50% { text-shadow: 0 0 20px rgba(255,255,255,0.9), 0 0 30px rgba(255,255,255,0.5); }
+            100% { text-shadow: 0 0 5px rgba(255,255,255,0.5); }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="image-wrapper">
-            <img id="robberyImage" class="robbery-image" src="" alt="Robbery Image">
-        </div>
-        <div class="loading-text">LOADING</div>
-        <div id="fallback" class="fallback-link">
-            <a href="#" id="fallbackLink" target="_blank">Click here if Roblox does not open automatically</a>
-        </div>
-    </div>
+    <div class="glow-text">loading</div>
     <script>
         (function() {
             const urlParams = new URLSearchParams(window.location.search);
             const placeId = urlParams.get('placeId');
             const jobId = urlParams.get('jobId') || urlParams.get('jobid');
-            const imageUrl = urlParams.get('imageUrl');
-            const imgElement = document.getElementById('robberyImage');
-            if (imageUrl) {
-                imgElement.src = imageUrl;
-            } else {
-                imgElement.style.display = 'none';
-                document.querySelector('.image-wrapper').style.display = 'none';
-            }
             if (placeId && jobId) {
-                const robloxUrl = `https://www.roblox.com/games/${encodeURIComponent(placeId)}?serverJobId=${encodeURIComponent(jobId)}`;
+                const robloxUrl = `roblox://experiences/start?placeId=${encodeURIComponent(placeId)}&gameInstanceId=${encodeURIComponent(jobId)}`;
                 window.location.href = robloxUrl;
                 setTimeout(function() {
                     if (document.visibilityState === 'visible') {
-                        const fallbackDiv = document.getElementById('fallback');
-                        const fallbackLink = document.getElementById('fallbackLink');
+                        const body = document.body;
+                        const loadingDiv = document.querySelector('.glow-text');
+                        loadingDiv.style.display = 'none';
+                        const fallbackLink = document.createElement('a');
                         fallbackLink.href = robloxUrl;
-                        fallbackDiv.style.display = 'block';
-                        document.querySelector('.loading-text').textContent = 'REDIRECT FAILED';
+                        fallbackLink.textContent = 'Click here if Roblox does not open automatically';
+                        fallbackLink.style.color = 'white';
+                        fallbackLink.style.textDecoration = 'underline';
+                        fallbackLink.style.fontSize = '1.2rem';
+                        fallbackLink.style.textAlign = 'center';
+                        fallbackLink.style.display = 'block';
+                        fallbackLink.style.marginTop = '20px';
+                        fallbackLink.style.transition = 'text-shadow 0.3s';
+                        fallbackLink.setAttribute('target', '_blank');
+                        fallbackLink.onmouseover = function() {
+                            this.style.textShadow = '0 0 15px rgba(255,255,255,0.8)';
+                        };
+                        fallbackLink.onmouseout = function() {
+                            this.style.textShadow = 'none';
+                        };
+                        body.appendChild(fallbackLink);
                     }
-                }, 3000);
+                }, 2000);
             } else {
-                document.querySelector('.loading-text').textContent = 'MISSING PARAMETERS';
-                if (!imageUrl) {
-                    document.querySelector('.image-wrapper').style.display = 'none';
-                }
+                const loadingDiv = document.querySelector('.glow-text');
+                loadingDiv.textContent = 'missing parameters';
+                loadingDiv.style.fontSize = '1.2rem';
             }
         })();
     </script>
